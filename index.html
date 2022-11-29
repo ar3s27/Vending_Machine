@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,19 +8,20 @@
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.5/web3.min.js"></script>
     <script language="javascript" type="text/javascript" src="otomatmakina_abi.js"></script>
-</head>
+  </head>
   <body>
 
     <script>
         
-        var ContractAddress = "0xD43a8c676b448835438D7e7bf88E2302789AdbCc";
+        var ContractAddress = "";//Sizin Kontrat Adresiniz.
         var top_Urun_sayisi;
         var selected_wallet_address;
         
 
         async function loadWeb3()
         {
-            if(window.ethereum){
+            if(window.ethereum)
+            {
                 window.web3 = new Web3(window.ethereum);
                 window.ethereum.enable();
             }
@@ -84,37 +85,40 @@
                 //console.log(respond2);
                 UrunAdi += '<input type="button" value="'+(i)+'\n'+ respond +'\n'+'Stok:'+' '+ respond2 + '" onclick="Satin_Al('+i+');">';
             }
-              document.getElementById("aday_listesi").innerHTML = UrunAdi ; 
+            document.getElementById("aday_listesi").innerHTML = UrunAdi ; 
         }
 
         async function stokGetir()
         {   
-            for( i = 0; i <top_Urun_sayisi;i++){
+            for( i = 0; i <top_Urun_sayisi;i++)
+            {
             var respond2 = await window.contract.methods.urun_stok(i).call({from: selected_wallet_address});
             //console.log(respond2);
-        }}
-        async function stokKontrol(stok){
+            }
+        }
+
+        async function stokKontrol(stok)
+        {
             var respond3 = await window.contract.methods.urun_stok(stok).call({from: selected_wallet_address});
             console.log(respond3);
             return respond3;
         }
+
         async function Satin_Al(sayi)
         {            
            var  stok_kontrol = await stokKontrol(sayi);
             var kacTane = await document.getElementById("kac_tane").value;
             if(parseInt(kacTane)>parseInt(stok_kontrol)|| kacTane==='0')
                 {
-
-                alert("Stoktan büyük sayı girdiniz");
+                    alert("Stoktan büyük sayı girdiniz");
                 }
                 else 
                 {
-                var hex= '0x'+parseInt('1000000000000000',10).toString(16);
-                console.log(hex);
-                await contract.methods.satinAl(sayi,kacTane).send({from: selected_wallet_address, value: hex*kacTane, gas: 210000, gasPrice: 8000000000});
-                SonucGetir2();                       
-                }
-        
+                    var hex= '0x'+parseInt('1000000000000000',10).toString(16);
+                    console.log(hex);
+                    await contract.methods.satinAl(sayi,kacTane).send({from: selected_wallet_address, value: hex*kacTane, gas: 210000, gasPrice: 8000000000});
+                    SonucGetir2();                       
+                }       
         }
 
         async function Stok_Ekle()
@@ -124,65 +128,60 @@
             var respond = await window.contract.methods.urun_stok_ekle(ID, stokSayisi).send({from: selected_wallet_address});
             //console.log(respond);
             SonucGetir2();
-        }
+        }     
      
-     
-        window.addEventListener('load', function() 
-        {
-            load();
-        });
+        window.addEventListener('load', function(){load();});
     
     </script>
     
     <div class="container">
-        <h1>Metamask Hesabı Bağlama</h1>
-        <div class="row">
-            <div class="col">
-                <input type="button" class="btn btn-danger" onclick="getCurrentAccount();" value="METAMASK BAĞLAN">
-                <input type="label" id="adres" value="Metamask bağlı değil" disabled="true">
-            </div>
-         </div>
+            <h1>Metamask Hesabı Bağlama</h1>
             <div class="row">
                 <div class="col">
-                    <input type="button" class="btn btn-warning" onclick="SonucGetir2();" value="Tüm Ürünler Getir">
+                    <input type="button" class="btn btn-danger" onclick="getCurrentAccount();" value="METAMASK BAĞLAN">
+                    <input type="label" id="adres" value="Metamask bağlı değil" disabled="true">
                 </div>
             </div>
-            <br>
-            <br>
-            <h1>Yeni Ürün Kaydetme İşleme</h1>
-    <div class="row">
-        <div class="col">
-            <input type="button" class="btn btn-primary"onclick="urun_ekle();" value="Ürünü  kaydet">
-            <input type="text" id="UrunAdi" placeholder="Ürün adı yazınız...">
-            <input type="text" id="UrunStok" placeholder="Ürün Stok Sayı yazınız..."> 
+                <div class="row">
+                    <div class="col">
+                        <input type="button" class="btn btn-warning" onclick="SonucGetir2();" value="Tüm Ürünler Getir">
+                    </div>
+                </div>
+                <br>
+                <br>
+                <h1>Yeni Ürün Kaydetme İşleme</h1>
+        <div class="row">
+            <div class="col">
+                <input type="button" class="btn btn-primary"onclick="urun_ekle();" value="Ürünü  kaydet">
+                <input type="text" id="UrunAdi" placeholder="Ürün adı yazınız...">
+                <input type="text" id="UrunStok" placeholder="Ürün Stok Sayı yazınız..."> 
+            </div>
         </div>
-    </div>
-    <br>
-    <br>
-    <h1>Stok Güncelleme</h1>
-    <div class="row">
-        <div class="col">
-            <h5>Ürün İD:  <input type="text" id="urun_id" placeholder="Ürün İD yazınız.."></h5>
-            <h5>Stok Sayısı:  <input type="text" id="stok_sayisi" placeholder="stok sayı yazınız.."></h5>
-            <input type="button" value="Stock Ekle" class="btn btn-success" id="stok_ekle" onclick=Stok_Ekle();>
+        <br>
+        <br>
+        <h1>Stok Güncelleme</h1>
+        <div class="row">
+            <div class="col">
+                <h5>Ürün İD:  <input type="text" id="urun_id" placeholder="Ürün İD yazınız.."></h5>
+                <h5>Stok Sayısı:  <input type="text" id="stok_sayisi" placeholder="stok sayı yazınız.."></h5>
+                <input type="button" value="Stock Ekle" class="btn btn-success" id="stok_ekle" onclick=Stok_Ekle();>
+            </div>
         </div>
-    </div>
-    <br>
-    <br>
-    <h1>Satış Panel</h1>
-    <div class="row">
-        <div class="col">
-       
-    <h5>Kac Tane: <input type="text" id="kac_tane" placeholder="kac tane alacaksiniz.."></h5>
-    </div>
-      <h5>Ürün Listesi</h5>  
-    <div class="col" id="aday_listesi">
-        <ul>
-            <li id="aday_index" margin="5px"></li>
-        </ul>
+        <br>
+        <br>
+        <h1>Satış Panel</h1>
+        <div class="row">
+            <div class="col">
+        
+        <h5>Kac Tane: <input type="text" id="kac_tane" placeholder="kac tane alacaksiniz.."></h5>
         </div>
-       
-    </div>
+        <h5>Ürün Listesi</h5>  
+        <div class="col" id="aday_listesi">
+            <ul>
+                <li id="aday_index" margin="5px"></li>
+            </ul>
+            </div>
+        </div>
     </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
   </body>
